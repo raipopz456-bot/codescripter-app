@@ -11,12 +11,21 @@ st.write("Welcome to CodeScripter! Ask any coding question, generate scripts, or
 # Retrieve API key safely from Render Environment Variables or fallback to sidebar
 groq_api_key = os.environ.get("GROQ_API_KEY") or st.sidebar.text_input("Enter Groq API Key:", type="password")
 
-# Sidebar settings with valid Groq models
+if not groq_api_key:
+    st.error("Please add GROQ_API_KEY to Render Environment Variables or enter it in the sidebar.")
+    st.stop()
+
+client = Groq(api_key=groq_api_key)
+
+# Fetch available models dynamically based on key permissions
+try:
+    available_models = [m.id for m in client.models.list().data]
+except Exception:
+    available_models = ["llama-3.1-70b-versatile", "llama3-8b-8192", "mixtral-8x7b-32768"]
+
+# Sidebar settings
 st.sidebar.header("Settings")
-model = st.sidebar.selectbox(
-    "Choose Model:",
-    ["llama-3.1-8b-instant", "mixtral-8x7b-32768", "gemma2-9b-it"]
-)
+model = st.sidebar.selectbox("Choose Model:", available_models)
 
 # Initialize chat history in session state
 if "messages" not in st.session_state:
@@ -29,19 +38,11 @@ for message in st.session_state.messages:
 
 # Process user input
 if prompt := st.chat_input("What code or programming question do you need help with?"):
-    if not groq_api_key:
-        st.error("Please add GROQ_API_KEY to Render Environment Variables or enter it in the sidebar.")
-        st.stop()
-
-    # Append user prompt to chat
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Call Groq API and render streaming response
     try:
-        client = Groq(api_key=groq_api_key)
-        
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             full_response = ""
@@ -49,7 +50,7 @@ if prompt := st.chat_input("What code or programming question do you need help w
             completion = client.chat.completions.create(
                 model=model,
                 messages=[
-                    {"role": "system", "content": "You are CodeScripter, an expert AI programming assistant. Provide clear, well-commented code snippets and helpful explanations."},
+                    {"role": "system", "content": "You are CodeScripter, an expert AI programming assistant."},
                     *[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
                 ],
                 stream=True,
