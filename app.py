@@ -2,7 +2,7 @@ import os
 import streamlit as st
 from groq import Groq
 
-# Page layout and configuration
+# Page layout and browser configuration
 st.set_page_config(
     page_title="CodeScripter AI",
     page_icon="🚀",
@@ -10,14 +10,16 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for UI styling, glowing blue circuit theme, and centered logo placement
+# Dark theme with electric blue accents and grid lines
 st.markdown("""
 <style>
-    /* Dark background with subtle circuit patterns */
+    /* Dark background with subtle grid lines */
     .stApp {
-        background-color: #0d1117;
-        background-image: radial-gradient(#1f293d 1px, transparent 1px);
-        background-size: 20px 20px;
+        background-color: #0b0f17;
+        background-image: 
+            linear-gradient(to right, rgba(0, 136, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0, 136, 255, 0.05) 1px, transparent 1px);
+        background-size: 30px 30px;
     }
 
     /* Custom Blue Accents for Input Fields & Sidebar Selectboxes */
@@ -34,15 +36,15 @@ st.markdown("""
         align-items: center;
         justify-content: center;
         text-align: center;
-        margin-top: -20px;
+        margin-top: -10px;
         margin-bottom: 25px;
     }
 
     .logo-img {
-        width: 140px;
-        height: auto;
+        width: 150px;
+        height: 150px;
         margin-bottom: 15px;
-        filter: drop-shadow(0px 0px 15px rgba(0, 136, 255, 0.6));
+        filter: drop-shadow(0px 0px 20px rgba(0, 136, 255, 0.8));
     }
 
     .main-title {
@@ -68,21 +70,25 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Centered Logo and Main Header
+# Centered Custom Logo matching exact blue ring bracket design
 st.markdown("""
 <div class="header-container">
     <svg class="logo-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="45" fill="none" stroke="#0088ff" stroke-width="4" filter="drop-shadow(0 0 8px #0088ff)"/>
-        <path d="M 30,50 L 45,65 L 70,35" fill="none" stroke="#0088ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M 25,30 L 15,30 L 15,70 L 25,70" fill="none" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
-        <path d="M 75,30 L 85,30 L 85,70 L 75,70" fill="none" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+        <!-- Outer Glowing Blue Circle -->
+        <circle cx="50" cy="50" r="42" fill="none" stroke="#0088ff" stroke-width="4.5"/>
+        <!-- Left Bracket (Green/Blue Gradient Accent) -->
+        <path d="M 38 32 L 28 32 L 28 68 L 38 68" fill="none" stroke="#00e676" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Right Bracket (Green/Blue Gradient Accent) -->
+        <path d="M 62 32 L 72 32 L 72 68 L 62 68" fill="none" stroke="#00e676" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Centered Blue Checkmark -->
+        <path d="M 38 52 L 48 62 L 68 38" fill="none" stroke="#0088ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
     <div class="main-title">CodeScripter AI Assistant</div>
     <div class="sub-title">Multi-language code generator, debugger, and scripting tool.</div>
 </div>
 """, unsafe_allow_html=True)
 
-# Retrieve API key safely from Render Environment Variables or fallback to sidebar
+# API Key Retrieval
 groq_api_key = os.environ.get("GROQ_API_KEY") or st.sidebar.text_input("Enter Groq API Key:", type="password")
 
 if not groq_api_key:
@@ -165,4 +171,3 @@ if prompt := st.chat_input("Ask a coding question or paste code to debug..."):
 
     except Exception as e:
         st.error(f"Error connecting to Groq: {e}")
-
