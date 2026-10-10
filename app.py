@@ -11,11 +11,11 @@ st.write("Welcome to CodeScripter! Ask any coding question, generate scripts, or
 # Retrieve API key safely from Render Environment Variables or fallback to sidebar
 groq_api_key = os.environ.get("GROQ_API_KEY") or st.sidebar.text_input("Enter Groq API Key:", type="password")
 
-# Sidebar settings
+# Sidebar settings with valid Groq models
 st.sidebar.header("Settings")
 model = st.sidebar.selectbox(
     "Choose Model:",
-    ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"]
+    ["llama-3.1-8b-instant", "mixtral-8x7b-32768", "gemma2-9b-it"]
 )
 
 # Initialize chat history in session state
@@ -66,5 +66,4 @@ if prompt := st.chat_input("What code or programming question do you need help w
 
     except Exception as e:
         st.error(f"An error occurred while connecting to Groq: {e}")
-            
 
