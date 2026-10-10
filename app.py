@@ -2,7 +2,7 @@ import os
 import streamlit as st
 from groq import Groq
 
-# Page layout and browser configuration
+# Page layout and browser tab configuration
 st.set_page_config(
     page_title="CodeScripter AI",
     page_icon="🚀",
@@ -10,26 +10,27 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Dark theme with electric blue accents and grid lines
+# Dark theme with glowing blue circuit lines and centered image styling
 st.markdown("""
 <style>
-    /* Dark background with subtle grid lines */
+    /* Dark background with circuit pattern overlay */
     .stApp {
         background-color: #0b0f17;
         background-image: 
+            radial-gradient(circle at 50% 30%, rgba(0, 136, 255, 0.15), transparent 40%),
             linear-gradient(to right, rgba(0, 136, 255, 0.05) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(0, 136, 255, 0.05) 1px, transparent 1px);
-        background-size: 30px 30px;
+        background-size: 100% 100%, 30px 30px, 30px 30px;
     }
 
     /* Custom Blue Accents for Input Fields & Sidebar Selectboxes */
     .stSelectbox > div > div, .stTextInput > div > div > input {
         border: 1.5px solid #0088ff !important;
-        box-shadow: 0 0 10px rgba(0, 136, 255, 0.2) !important;
+        box-shadow: 0 0 10px rgba(0, 136, 255, 0.25) !important;
         border-radius: 8px !important;
     }
 
-    /* Centered Header & Logo Layout */
+    /* Center Header & Metallic Logo Container */
     .header-container {
         display: flex;
         flex-direction: column;
@@ -37,20 +38,14 @@ st.markdown("""
         justify-content: center;
         text-align: center;
         margin-top: -10px;
-        margin-bottom: 25px;
-    }
-
-    .logo-img {
-        width: 150px;
-        height: 150px;
-        margin-bottom: 15px;
-        filter: drop-shadow(0px 0px 20px rgba(0, 136, 255, 0.8));
+        margin-bottom: 20px;
     }
 
     .main-title {
         font-size: 2.5rem;
         font-weight: 800;
         color: #ffffff;
+        margin-top: 10px;
         margin-bottom: 5px;
         letter-spacing: -0.5px;
     }
@@ -64,31 +59,28 @@ st.markdown("""
     /* Glowing Blue Chat Input Box */
     .stChatInput > div {
         border: 2px solid #0088ff !important;
-        box-shadow: 0 0 15px rgba(0, 136, 255, 0.3) !important;
+        box-shadow: 0 0 15px rgba(0, 136, 255, 0.35) !important;
         border-radius: 12px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Centered Custom Logo matching exact blue ring bracket design
+# Render Centered Metallic Logo (Supports both logo.png and logo.png.png)
+col1, col2, col3 = st.columns([1, 1.2, 1])
+with col2:
+    if os.path.exists("logo.png"):
+        st.image("logo.png", width="stretch")
+    elif os.path.exists("logo.png.png"):
+        st.image("logo.png.png", width="stretch")
+
 st.markdown("""
 <div class="header-container">
-    <svg class="logo-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <!-- Outer Glowing Blue Circle -->
-        <circle cx="50" cy="50" r="42" fill="none" stroke="#0088ff" stroke-width="4.5"/>
-        <!-- Left Bracket (Green/Blue Gradient Accent) -->
-        <path d="M 38 32 L 28 32 L 28 68 L 38 68" fill="none" stroke="#00e676" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- Right Bracket (Green/Blue Gradient Accent) -->
-        <path d="M 62 32 L 72 32 L 72 68 L 62 68" fill="none" stroke="#00e676" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- Centered Blue Checkmark -->
-        <path d="M 38 52 L 48 62 L 68 38" fill="none" stroke="#0088ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
     <div class="main-title">CodeScripter AI Assistant</div>
     <div class="sub-title">Multi-language code generator, debugger, and scripting tool.</div>
 </div>
 """, unsafe_allow_html=True)
 
-# API Key Retrieval
+# Retrieve API key safely from Render Environment Variables or fallback to sidebar
 groq_api_key = os.environ.get("GROQ_API_KEY") or st.sidebar.text_input("Enter Groq API Key:", type="password")
 
 if not groq_api_key:
