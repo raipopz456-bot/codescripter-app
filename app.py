@@ -17,11 +17,16 @@ if not groq_api_key:
 
 client = Groq(api_key=groq_api_key)
 
-# Fetch available models dynamically based on key permissions
+# Fetch available models and filter out non-chat models (like Whisper and Guard models)
 try:
-    available_models = [m.id for m in client.models.list().data]
+    all_models = [m.id for m in client.models.list().data]
+    chat_models = [
+        m for m in all_models 
+        if not any(excluded in m.lower() for excluded in ["whisper", "guard", "safetensors", "distil-whisper"])
+    ]
+    available_models = chat_models if chat_models else all_models
 except Exception:
-    available_models = ["llama-3.1-70b-versatile", "llama3-8b-8192", "mixtral-8x7b-32768"]
+    available_models = ["llama3-8b-8192", "llama3-70b-8192", "mixtral-8x7b-32768"]
 
 # Sidebar settings
 st.sidebar.header("Settings")
