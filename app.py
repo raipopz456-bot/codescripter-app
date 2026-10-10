@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from groq import Groq
 
@@ -7,14 +8,14 @@ st.set_page_config(page_title="CodeScripter AI", page_icon="💻", layout="wide"
 st.title("💻 CodeScripter AI Assistant")
 st.write("Welcome to CodeScripter! Ask any coding question, generate scripts, or debug your code below.")
 
-# Get Groq API key from Render Environment Variables
-groq_api_key = st.secrets.get("GROQ_API_KEY") or st.sidebar.text_input("Enter Groq API Key:", type="password")
+# Retrieve API key safely from Render Environment Variables or fallback to sidebar
+groq_api_key = os.environ.get("GROQ_API_KEY") or st.sidebar.text_input("Enter Groq API Key:", type="password")
 
 # Sidebar settings
 st.sidebar.header("Settings")
 model = st.sidebar.selectbox(
     "Choose Model:",
-    ["llama-3.3-70b-versatile", "llama3-80b-8192", "mixtral-8x7b-32768"]
+    ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"]
 )
 
 # Initialize chat history in session state
@@ -29,7 +30,7 @@ for message in st.session_state.messages:
 # Process user input
 if prompt := st.chat_input("What code or programming question do you need help with?"):
     if not groq_api_key:
-        st.error("Please add your GROQ_API_KEY to Render Environment Variables or enter it in the sidebar.")
+        st.error("Please add GROQ_API_KEY to Render Environment Variables or enter it in the sidebar.")
         st.stop()
 
     # Append user prompt to chat
@@ -37,7 +38,7 @@ if prompt := st.chat_input("What code or programming question do you need help w
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Call Groq API and render AI response
+    # Call Groq API and render streaming response
     try:
         client = Groq(api_key=groq_api_key)
         
@@ -65,3 +66,5 @@ if prompt := st.chat_input("What code or programming question do you need help w
 
     except Exception as e:
         st.error(f"An error occurred while connecting to Groq: {e}")
+            
+
